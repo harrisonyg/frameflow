@@ -12,15 +12,10 @@
 - **Thumbnail previews**
 - **Media organization**
 
-### 🛠️ Professional Tools
-- **Text editing** with custom fonts and styling in future
-- **Shape tools** (rectangles, circles, triangles)
-- **Brush tools** for freehand drawing
-- **Layer management**
-- **Undo/Redo functionality**
+
 
 ### 📤 Export Options
-- **Multiple formats** (PNG, JPEG, WebP, PDF)
+- **Multiple formats** (PNG, JPEG, WebP)
 - **Quality settings** (60% to 100%)
 - **Custom export sizes**
 - **Batch export** capabilities
@@ -36,7 +31,7 @@
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd instagram-image-editor
+   cd frameflow
    ```
 
 2. **Install dependencies**
