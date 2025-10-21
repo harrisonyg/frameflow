@@ -4,7 +4,6 @@
   "description": "Professional image editor for Instagram with collage making capabilities",
   "homepage": "https://harrisonyg.github.io/frameflow",
   "private": true,
-  "main": "public/index.html",
   "dependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
