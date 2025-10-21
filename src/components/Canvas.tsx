@@ -55,11 +55,10 @@ const Canvas = forwardRef<any, CanvasProps>(({
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [internalZoom, setInternalZoom] = useState(1);
   const [isCropMode, setIsCropMode] = useState(false);
   
-  // Use external zoom if provided, otherwise use internal
-  const zoom = externalZoom !== undefined ? externalZoom : internalZoom;
+  // Use external zoom if provided, otherwise default to 1
+  const zoom = externalZoom !== undefined ? externalZoom : 1;
 
   const clearAllObjects = useCallback(() => {
     if (!fabricCanvasRef.current) return;
