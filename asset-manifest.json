@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/frameflow/static/css/main.e7248856.css",
+    "main.js": "/frameflow/static/js/main.e17a7d36.js",
+    "index.html": "/frameflow/index.html",
+    "main.e7248856.css.map": "/frameflow/static/css/main.e7248856.css.map",
+    "main.e17a7d36.js.map": "/frameflow/static/js/main.e17a7d36.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e7248856.css",
+    "static/js/main.e17a7d36.js"
+  ]
+}
