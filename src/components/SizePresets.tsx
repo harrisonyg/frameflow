@@ -1,5 +1,5 @@
 import React from 'react';
-import { Instagram, Square, RectangleHorizontal, RectangleVertical } from 'lucide-react';
+import { Square, RectangleHorizontal, RectangleVertical } from 'lucide-react';
 import { InstagramSize } from '../types';
 
 interface SizePresetsProps {

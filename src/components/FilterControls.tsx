@@ -71,6 +71,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({ onFilterChange, hasSele
       
       return () => clearTimeout(timeoutId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, hasSelectedImage]); // Removed onFilterChange from deps to prevent infinite loop
 
   const handleSliderChange = useCallback((key: keyof ImageFilters, value: number) => {

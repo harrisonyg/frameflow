@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Download, Image, FileText, Settings, Check } from 'lucide-react';
+import { Download, Image, Settings } from 'lucide-react';
 
 interface ExportModalProps {
   isVisible: boolean;
@@ -31,20 +31,19 @@ const ExportModal: React.FC<ExportModalProps> = ({
 }) => {
   const [selectedFormat, setSelectedFormat] = useState('png');
   const [quality, setQuality] = useState(0.9);
-  const [exportSize, setExportSize] = useState(currentSize);
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = useCallback(async () => {
     setIsExporting(true);
     try {
-      await onExport(selectedFormat, quality, exportSize);
+      await onExport(selectedFormat, quality, currentSize);
       // Simulate export delay
       await new Promise(resolve => setTimeout(resolve, 2000));
     } finally {
       setIsExporting(false);
       onClose();
     }
-  }, [selectedFormat, quality, exportSize, onExport, onClose]);
+  }, [selectedFormat, quality, currentSize, onExport, onClose]);
 
   if (!isVisible) return null;
 
@@ -162,8 +161,8 @@ const ExportModal: React.FC<ExportModalProps> = ({
             <div className="text-xs text-gray-400 space-y-1">
               <div>Format: {exportFormats.find(f => f.id === selectedFormat)?.name}</div>
               <div>Quality: {Math.round(quality * 100)}%</div>
-              <div>Size: {exportSize.width} × {exportSize.height}px</div>
-              <div>Estimated file size: ~{Math.round((exportSize.width * exportSize.height * 3 * quality) / 1024 / 1024)}MB</div>
+              <div>Size: {currentSize.width} × {currentSize.height}px</div>
+              <div>Estimated file size: ~{Math.round((currentSize.width * currentSize.height * 3 * quality) / 1024 / 1024)}MB</div>
             </div>
           </div>
 

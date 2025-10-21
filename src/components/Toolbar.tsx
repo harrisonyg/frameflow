@@ -2,10 +2,8 @@ import React from 'react';
 import { 
   MousePointer, 
   Move, 
-  RotateCcw, 
   Type, 
   Palette,
-  Filter,
   Crop,
   Download,
   Undo,

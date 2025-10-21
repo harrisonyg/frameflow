@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { fabric } from 'fabric';
-import { Eye, EyeOff } from 'lucide-react';
 import { MediaItem } from '../types';
 
 export interface ImageFilters {
@@ -55,8 +54,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedObjects, setSelectedObjects] = useState<fabric.Object[]>([]);
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [scale, setScale] = useState(1);
   const [internalZoom, setInternalZoom] = useState(1);
   const [isCropMode, setIsCropMode] = useState(false);
@@ -69,8 +66,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
     
     fabricCanvasRef.current.clear();
     fabricCanvasRef.current.setBackgroundColor('#ffffff', fabricCanvasRef.current.renderAll.bind(fabricCanvasRef.current));
-    setSelectedObjects([]);
-    setShowDeleteButton(false);
   }, []);
 
   const applyFilters = useCallback((filters: ImageFilters) => {
@@ -196,8 +191,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
       // Add event listeners
       canvas.on('selection:created', (e) => {
         const activeObjects = canvas.getActiveObjects();
-        setSelectedObjects(activeObjects);
-        setShowDeleteButton(activeObjects.length > 0);
         
         // Check if any selected object is an image
         const hasImage = activeObjects.some(obj => obj.type === 'image' || obj.type === 'group');
@@ -221,8 +214,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
 
       canvas.on('selection:updated', (e) => {
         const activeObjects = canvas.getActiveObjects();
-        setSelectedObjects(activeObjects);
-        setShowDeleteButton(activeObjects.length > 0);
         
         // Check if any selected object is an image
         const hasImage = activeObjects.some(obj => obj.type === 'image' || obj.type === 'group');
@@ -245,8 +236,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
       });
 
       canvas.on('selection:cleared', () => {
-        setSelectedObjects([]);
-        setShowDeleteButton(false);
         currentImageId = null;
         if (onSelectionChange) {
           onSelectionChange(false, undefined);
@@ -297,6 +286,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
         fabricCanvasRef.current = null;
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update canvas size when props change
@@ -359,6 +349,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
           setIsCropMode(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTool]);
 
   // Drag and drop for media items
@@ -536,37 +527,8 @@ const Canvas = forwardRef<any, CanvasProps>(({
       });
       fabricCanvasRef.current.discardActiveObject();
       fabricCanvasRef.current.renderAll();
-      setSelectedObjects([]);
-      setShowDeleteButton(false);
     }
   }, []);
-
-  // Zoom functions
-  const handleZoomIn = useCallback(() => {
-    const newZoom = Math.min(zoom + 0.1, 3);
-    if (onZoomChange) {
-      onZoomChange(newZoom);
-    } else {
-      setInternalZoom(newZoom);
-    }
-  }, [zoom, onZoomChange]);
-
-  const handleZoomOut = useCallback(() => {
-    const newZoom = Math.max(zoom - 0.1, 0.5);
-    if (onZoomChange) {
-      onZoomChange(newZoom);
-    } else {
-      setInternalZoom(newZoom);
-    }
-  }, [zoom, onZoomChange]);
-
-  const handleZoomReset = useCallback(() => {
-    if (onZoomChange) {
-      onZoomChange(1);
-    } else {
-      setInternalZoom(1);
-    }
-  }, [onZoomChange]);
 
   const enableCropMode = useCallback(() => {
     if (!fabricCanvasRef.current) return;

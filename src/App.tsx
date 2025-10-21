@@ -63,25 +63,6 @@ const App: React.FC = () => {
     setCanvasSize({ width, height });
   }, []);
 
-  const handleToolChange = useCallback((tool: string) => {
-    setActiveTool(tool);
-    if (tool === 'export') {
-      setShowExportModal(true);
-    } else if (tool === 'carousel') {
-      setIsCarouselMode(true);
-    } else if (tool === 'save') {
-      // Trigger save/download
-      handleQuickExport();
-    } else if (tool === 'undo') {
-      // Undo functionality - would need to implement history
-      console.log('Undo');
-    } else if (tool === 'redo') {
-      // Redo functionality - would need to implement history
-      console.log('Redo');
-    }
-    // Don't change carousel mode for other tools like select, move, text, etc.
-  }, []);
-
   const handleQuickExport = useCallback(() => {
     // Deselect all objects before export
     if (canvasRef.current && canvasRef.current.discardActiveObject) {
@@ -99,6 +80,24 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const handleToolChange = useCallback((tool: string) => {
+    setActiveTool(tool);
+    if (tool === 'export') {
+      setShowExportModal(true);
+    } else if (tool === 'carousel') {
+      setIsCarouselMode(true);
+    } else if (tool === 'save') {
+      // Trigger save/download
+      handleQuickExport();
+    } else if (tool === 'undo') {
+      // Undo functionality - would need to implement history
+      console.log('Undo');
+    } else if (tool === 'redo') {
+      // Redo functionality - would need to implement history
+      console.log('Redo');
+    }
+    // Don't change carousel mode for other tools like select, move, text, etc.
+  }, [handleQuickExport]);
 
   const handleZoomIn = useCallback(() => {
     setZoom(prev => Math.min(prev + 0.1, 3));
@@ -158,22 +157,18 @@ const App: React.FC = () => {
     console.log('Carousel slides:', carouselSlides);
 
     try {
-      // Determine the mime type based on format
-      let mimeType = 'image/png';
+      // Determine the file extension based on format
       let extension = 'png';
       
       switch (format) {
         case 'jpg':
-          mimeType = 'image/jpeg';
           extension = 'jpg';
           break;
         case 'webp':
-          mimeType = 'image/webp';
           extension = 'webp';
           break;
         case 'png':
         default:
-          mimeType = 'image/png';
           extension = 'png';
           break;
       }
