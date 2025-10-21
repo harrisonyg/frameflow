@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "🎨 Installing Instagram Image Editor..."
-echo "======================================"
+echo "======================================="
 
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
