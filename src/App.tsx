@@ -90,11 +90,15 @@ const App: React.FC = () => {
       // Trigger save/download
       handleQuickExport();
     } else if (tool === 'undo') {
-      // Undo functionality - would need to implement history
-      console.log('Undo');
+      // Trigger undo
+      if (canvasRef.current && canvasRef.current.undo) {
+        canvasRef.current.undo();
+      }
     } else if (tool === 'redo') {
-      // Redo functionality - would need to implement history
-      console.log('Redo');
+      // Trigger redo
+      if (canvasRef.current && canvasRef.current.redo) {
+        canvasRef.current.redo();
+      }
     }
     // Don't change carousel mode for other tools like select, move, text, etc.
   }, [handleQuickExport]);

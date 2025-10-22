@@ -57,15 +57,66 @@ const Canvas = forwardRef<any, CanvasProps>(({
   const [scale, setScale] = useState(1);
   const [isCropMode, setIsCropMode] = useState(false);
   
+  // Undo/Redo history
+  const historyRef = useRef<string[]>([]);
+  const historyStepRef = useRef<number>(-1);
+  const isUndoRedoRef = useRef<boolean>(false);
+  
   // Use external zoom if provided, otherwise default to 1
   const zoom = externalZoom !== undefined ? externalZoom : 1;
+
+  const saveState = useCallback(() => {
+    if (!fabricCanvasRef.current || isUndoRedoRef.current) return;
+    
+    const json = JSON.stringify(fabricCanvasRef.current.toJSON(['selectable', 'evented', '__imageId']));
+    
+    // Remove any states after current step (when user makes new change after undo)
+    historyRef.current = historyRef.current.slice(0, historyStepRef.current + 1);
+    
+    // Add new state
+    historyRef.current.push(json);
+    historyStepRef.current = historyRef.current.length - 1;
+    
+    // Limit history to 50 states
+    if (historyRef.current.length > 50) {
+      historyRef.current.shift();
+      historyStepRef.current--;
+    }
+  }, []);
+
+  const undo = useCallback(() => {
+    if (!fabricCanvasRef.current || historyStepRef.current <= 0) return;
+    
+    isUndoRedoRef.current = true;
+    historyStepRef.current--;
+    
+    const state = historyRef.current[historyStepRef.current];
+    fabricCanvasRef.current.loadFromJSON(state, () => {
+      fabricCanvasRef.current!.renderAll();
+      isUndoRedoRef.current = false;
+    });
+  }, []);
+
+  const redo = useCallback(() => {
+    if (!fabricCanvasRef.current || historyStepRef.current >= historyRef.current.length - 1) return;
+    
+    isUndoRedoRef.current = true;
+    historyStepRef.current++;
+    
+    const state = historyRef.current[historyStepRef.current];
+    fabricCanvasRef.current.loadFromJSON(state, () => {
+      fabricCanvasRef.current!.renderAll();
+      isUndoRedoRef.current = false;
+    });
+  }, []);
 
   const clearAllObjects = useCallback(() => {
     if (!fabricCanvasRef.current) return;
     
     fabricCanvasRef.current.clear();
     fabricCanvasRef.current.setBackgroundColor('#ffffff', fabricCanvasRef.current.renderAll.bind(fabricCanvasRef.current));
-  }, []);
+    saveState();
+  }, [saveState]);
 
   const applyFilters = useCallback((filters: ImageFilters) => {
     if (!fabricCanvasRef.current) return;
@@ -156,8 +207,12 @@ const Canvas = forwardRef<any, CanvasProps>(({
       }
     },
     applyFilters: applyFilters,
-    getFabricCanvas: () => fabricCanvasRef.current
-  }), [clearAllObjects, applyFilters]);
+    getFabricCanvas: () => fabricCanvasRef.current,
+    undo: undo,
+    redo: redo,
+    canUndo: () => historyStepRef.current > 0,
+    canRedo: () => historyStepRef.current < historyRef.current.length - 1
+  }), [clearAllObjects, applyFilters, undo, redo]);
 
   // Initialize Fabric.js canvas
   useEffect(() => {
@@ -242,9 +297,24 @@ const Canvas = forwardRef<any, CanvasProps>(({
         console.log('Selection cleared');
       });
 
+      // Save state on object modifications
+      canvas.on('object:added', () => saveState());
+      canvas.on('object:modified', () => saveState());
+      canvas.on('object:removed', () => saveState());
+      
+      // Save initial state
+      saveState();
+
       // Handle keyboard events
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Delete' || e.key === 'Backspace') {
+        // Undo/Redo shortcuts
+        if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+          e.preventDefault();
+          undo();
+        } else if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+          e.preventDefault();
+          redo();
+        } else if (e.key === 'Delete' || e.key === 'Backspace') {
           deleteSelectedObjects();
         } else if (e.key === '[') {
           // Send backward
@@ -286,7 +356,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [saveState, undo, redo]);
 
   // Update canvas size when props change
   useEffect(() => {
