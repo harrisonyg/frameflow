@@ -1,7 +1,7 @@
 {
   "name": "instagram-image-editor",
   "version": "1.0.0",
-  "description": "Professional image editor for Instagram with collage making capabilities",
+  "description": "Professional image editor for Instagram with carousel making capabilities",
   "homepage": "https://harrisonyg.github.io/frameflow",
   "private": true,
   "dependencies": {
