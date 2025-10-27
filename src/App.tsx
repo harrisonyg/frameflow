@@ -9,6 +9,7 @@ import SizePresets from './components/SizePresets';
 import ExportModal from './components/ExportModal';
 import FilterControls, { ImageFilters } from './components/FilterControls';
 import { MediaItem } from './types';
+import logo from './assets/logow.png';
 
 const App: React.FC = () => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
@@ -242,7 +243,10 @@ const App: React.FC = () => {
         {/* Media Panel - Top Left */}
         <div className="w-80 panel flex flex-col">
           <div className="p-4 border-b border-gray-700">
-            <h2 className="text-2xl font-bold mb-8">FrameFlow</h2>
+            <h2 className="text-2xl font-bold mb-8 flex items-center gap-2">
+              <img src={logo} alt="FrameFlow Logo" className="h-8 w-8" />
+              FrameFlow
+            </h2>
               <MediaPanel
                 mediaItems={mediaItems}
                 selectedMedia={selectedMedia}
