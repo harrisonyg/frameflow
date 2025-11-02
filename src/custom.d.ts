@@ -28,3 +28,8 @@ declare module '*.webp' {
   export default value;
 }
 
+declare module '*.flo' {
+  const value: string;
+  export default value;
+}
+

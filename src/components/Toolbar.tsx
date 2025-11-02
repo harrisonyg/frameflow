@@ -1,16 +1,20 @@
 import React from 'react';
 import { 
   MousePointer, 
-  Move, 
   Type, 
   Palette,
   Crop,
   Download,
   Undo,
   Redo,
-  ImageIcon,
+  Save,
+  FolderOpen,
+  Layout,
+  Square,
   Plus,
-  Minus
+  Minus,
+  Columns,
+  SquareStack
 } from 'lucide-react';
 
 interface ToolbarProps {
@@ -19,11 +23,12 @@ interface ToolbarProps {
   carouselSlides?: number;
   onCarouselSlidesChange?: (slides: number) => void;
   isCarouselMode?: boolean;
+  carouselSlideSize?: { width: number; height: number };
+  onCarouselSlideSizeChange?: (width: number, height: number) => void;
 }
 
 const tools = [
   { id: 'select', name: 'Select', icon: MousePointer },
-  { id: 'move', name: 'Move', icon: Move },
   { id: 'crop', name: 'Crop', icon: Crop },
   { id: 'text', name: 'Text', icon: Type },
   { id: 'brush', name: 'Brush', icon: Palette },
@@ -32,6 +37,8 @@ const tools = [
 const actions = [
   { id: 'undo', name: 'Undo', icon: Undo },
   { id: 'redo', name: 'Redo', icon: Redo },
+  { id: 'saveProject', name: 'Save Project', icon: Save },
+  { id: 'openProject', name: 'Open Project', icon: FolderOpen },
   { id: 'export', name: 'Export', icon: Download }
 ];
 
@@ -40,7 +47,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
   onToolChange, 
   carouselSlides = 1, 
   onCarouselSlidesChange,
-  isCarouselMode = false 
+  isCarouselMode = false,
+  carouselSlideSize = { width: 1080, height: 1080 },
+  onCarouselSlideSizeChange
 }) => {
   return (
     <div className="flex items-center gap-2 flex-nowrap min-w-max">
@@ -68,6 +77,59 @@ const Toolbar: React.FC<ToolbarProps> = ({
       {/* Divider */}
       <div className="w-px h-8 bg-gray-600"></div>
 
+      {/* Carousel Mode Toggle */}
+      <button
+        onClick={() => onToolChange('carousel')}
+        className={`
+          tool-button flex items-center gap-2 px-3 py-2 rounded-lg transition-colors
+          ${isCarouselMode ? 'bg-cta-blue text-white' : 'bg-gray-700 hover:bg-gray-600'}
+        `}
+        title={isCarouselMode ? "Carousel Mode Active - Click to disable" : "Enable Carousel Mode"}
+      >
+        {isCarouselMode ? (
+          <Columns size={18} />
+        ) : (
+          <SquareStack size={18} />
+        )}
+        <span className="text-xs font-medium">
+          {isCarouselMode ? 'Carousel ON' : 'Carousel OFF'}
+        </span>
+      </button>
+
+      {/* Carousel Slide Controls - Only show when carousel mode is active */}
+      {isCarouselMode && (
+        <>
+          <div className="flex items-center gap-1 bg-gray-800 rounded-lg px-2 py-1">
+            <button
+              onClick={() => onCarouselSlidesChange?.(Math.max(1, carouselSlides - 1))}
+              disabled={carouselSlides <= 1}
+              className={`
+                p-1 rounded transition-colors
+                ${carouselSlides <= 1 
+                  ? 'text-gray-600 cursor-not-allowed' 
+                  : 'text-white hover:bg-gray-700'}
+              `}
+              title="Remove slide"
+            >
+              <Minus size={16} />
+            </button>
+            <span className="text-xs text-white font-medium px-2 min-w-[3rem] text-center">
+              {carouselSlides} {carouselSlides === 1 ? 'Slide' : 'Slides'}
+            </span>
+            <button
+              onClick={() => onCarouselSlidesChange?.(carouselSlides + 1)}
+              className="p-1 rounded text-white hover:bg-gray-700 transition-colors"
+              title="Add slide"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* Divider */}
+      <div className="w-px h-8 bg-gray-600"></div>
+
       {/* Actions */}
       <div className="flex items-center gap-1">
         {actions.map((action) => {
@@ -86,54 +148,6 @@ const Toolbar: React.FC<ToolbarProps> = ({
         })}
       </div>
 
-      {/* Carousel Mode Toggle */}
-      <div className="w-px h-8 bg-gray-600"></div>
-      
-      <button
-        className={`
-          tool-button flex items-center gap-1 px-2 py-2
-          ${activeTool === 'carousel' ? 'active' : ''}
-        `}
-        onClick={() => onToolChange('carousel')}
-        title="Carousel Mode"
-      >
-        <ImageIcon size={18} />
-        <span className="hidden lg:inline text-xs">Carousel</span>
-      </button>
-
-      {/* Carousel Slide Counter */}
-      {isCarouselMode && onCarouselSlidesChange && (
-        <div className="flex items-center gap-1 bg-gray-700 rounded-lg px-2 py-1">
-          <button
-            onClick={() => onCarouselSlidesChange(Math.max(1, carouselSlides - 1))}
-            className="p-1 hover:bg-gray-600 rounded transition-colors"
-            title="Decrease slides"
-            disabled={carouselSlides <= 1}
-          >
-            <Minus size={14} />
-          </button>
-          <input
-            type="number"
-            value={carouselSlides}
-            onChange={(e) => {
-              const value = parseInt(e.target.value) || 1;
-              onCarouselSlidesChange(Math.max(1, Math.min(10, value)));
-            }}
-            className="w-12 bg-gray-800 text-center text-xs py-1 rounded border border-gray-600"
-            min="1"
-            max="10"
-          />
-          <button
-            onClick={() => onCarouselSlidesChange(Math.min(10, carouselSlides + 1))}
-            className="p-1 hover:bg-gray-600 rounded transition-colors"
-            title="Increase slides"
-            disabled={carouselSlides >= 10}
-          >
-            <Plus size={14} />
-          </button>
-          <span className="text-xs text-gray-400 ml-1">slides</span>
-        </div>
-      )}
     </div>
   );
 };
