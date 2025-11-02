@@ -9,8 +9,6 @@ import {
   Redo,
   Save,
   FolderOpen,
-  Layout,
-  Square,
   Plus,
   Minus,
   Columns,

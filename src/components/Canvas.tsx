@@ -864,7 +864,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
     // Center after a short delay to ensure scale is applied
     const timer = setTimeout(centerCanvas, 100);
     return () => clearTimeout(timer);
-  }, [scale, containerWidth, height]);
+  }, [scale, containerWidth, height, carouselSlides]);
 
   // Combined scale (fit scale * user zoom)
   const finalScale = scale * zoom;
@@ -899,6 +899,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
           setIsCropMode(false);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTool]);
 
   // Drag and drop for media items
@@ -1093,33 +1094,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
       setShowDeleteButton(false);
     }
   }, []);
-
-  // Zoom functions
-  const handleZoomIn = useCallback(() => {
-    const newZoom = Math.min(zoom + 0.1, 3);
-    if (onZoomChange) {
-      onZoomChange(newZoom);
-    } else {
-      setInternalZoom(newZoom);
-    }
-  }, [zoom, onZoomChange]);
-
-  const handleZoomOut = useCallback(() => {
-    const newZoom = Math.max(zoom - 0.1, 0.5);
-    if (onZoomChange) {
-      onZoomChange(newZoom);
-    } else {
-      setInternalZoom(newZoom);
-    }
-  }, [zoom, onZoomChange]);
-
-  const handleZoomReset = useCallback(() => {
-    if (onZoomChange) {
-      onZoomChange(1);
-    } else {
-      setInternalZoom(1);
-    }
-  }, [onZoomChange]);
 
   const enableCropMode = useCallback(() => {
     if (!fabricCanvasRef.current) return;
