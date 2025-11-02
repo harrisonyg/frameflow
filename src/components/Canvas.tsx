@@ -785,6 +785,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
         fabricCanvasRef.current = null;
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveState]);
 
   // Update canvas size when props change
@@ -836,7 +837,6 @@ const Canvas = forwardRef<any, CanvasProps>(({
     const centerCanvas = () => {
       if (scrollContainerRef.current && containerRef.current) {
         const scrollContainer = scrollContainerRef.current;
-        const container = containerRef.current;
         
         // Wait for next frame to ensure DOM is updated
         requestAnimationFrame(() => {
