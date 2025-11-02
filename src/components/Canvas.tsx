@@ -58,10 +58,12 @@ const Canvas = forwardRef<any, CanvasProps>(({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedObjects, setSelectedObjects] = useState<fabric.Object[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [scale, setScale] = useState(1);
-  const [internalZoom, setInternalZoom] = useState(1);
+  const [internalZoom] = useState(1);
   const [isCropMode, setIsCropMode] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
   const [isSpacePressed, setIsSpacePressed] = useState(false);
@@ -439,7 +441,7 @@ const Canvas = forwardRef<any, CanvasProps>(({
       // Nothing to paste
       console.log('Nothing to paste - no new system image and no internal objects');
     }
-  }, [pasteObjects, width, height, isCarouselMode, currentZoom, scale, zoom]);
+  }, [pasteObjects, width, height, isCarouselMode, zoom]);
 
   // Zoom in/out at cursor position - smooth and fast
   const handleZoomWithFocus = useCallback((direction: 'in' | 'out' | 'reset') => {
